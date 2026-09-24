@@ -1,4 +1,4 @@
-# 简历工坊 Resume Maker
+# Resume Maker
 
 一个本地优先、开源、前后端分离的中文简历生成器。前端使用 React + Vite + TypeScript，后端使用 FastAPI + SQLite。
 

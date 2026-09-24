@@ -1,6 +1,7 @@
 import { Check, Cloud, Download, Github, LayoutTemplate, Loader2, Palette, RotateCcw, Sparkles } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createResume, updateResume } from './api'
+import BreadIcon from './components/BreadIcon'
 import ResumeChat from './components/ResumeChat'
 import ResumePreview from './components/ResumePreview'
 import { sampleResume } from './sample'
@@ -52,7 +53,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#"><span className="brand-mark">简</span><span>简历工坊<small>RESUME MAKER</small></span></a>
+        <a className="brand" href="#"><span className="brand-mark"><BreadIcon size={25} /></span><span>Resume Maker<small>OPEN SOURCE RESUME BUILDER</small></span></a>
         <div className="document-title">
           <input value={resume.title} onChange={(e) => setResume({ ...resume, title: e.target.value })} aria-label="简历标题" />
           <span className={`save-state ${saveState}`}>

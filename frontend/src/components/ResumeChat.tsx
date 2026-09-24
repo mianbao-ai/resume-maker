@@ -1,6 +1,7 @@
-import { ArrowUp, Check, MessageSquareText, Sparkles, Target, WandSparkles } from 'lucide-react'
+import { ArrowUp, Check, MessageSquareText, Target } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { ResumeData } from '../types'
+import BreadIcon from './BreadIcon'
 
 type Proposal = { kind: 'summary'; before: string; after: string; applied?: boolean }
 type Message = { id: string; role: 'assistant' | 'user'; content: string; proposal?: Proposal }
@@ -70,7 +71,7 @@ export default function ResumeChat({ resume, onChange }: { resume: ResumeData; o
   return (
     <section className="resume-chat">
       <header className="chat-header">
-        <div className="chat-agent-avatar"><WandSparkles size={17} /></div>
+        <div className="chat-agent-avatar"><BreadIcon size={19} /></div>
         <div><strong>面包简历顾问</strong><span><i /> 本地模式</span></div>
       </header>
 
@@ -78,7 +79,7 @@ export default function ResumeChat({ resume, onChange }: { resume: ResumeData; o
 
       <div className="chat-messages">
         {messages.map((message) => <div className={`chat-message ${message.role}`} key={message.id}>
-          <div className="chat-avatar">{message.role === 'user' ? '我' : <Sparkles size={14} />}</div>
+          <div className="chat-avatar">{message.role === 'user' ? '我' : <BreadIcon size={16} />}</div>
           <div className="chat-bubble-wrap">
             <span>{message.role === 'user' ? '你' : '面包'}</span>
             <div className="chat-bubble">{message.content.split('\n').map((line, index) => <p key={index}>{line || <br />}</p>)}</div>
@@ -91,7 +92,7 @@ export default function ResumeChat({ resume, onChange }: { resume: ResumeData; o
             </div>}
           </div>
         </div>)}
-        {thinking && <div className="chat-message assistant"><div className="chat-avatar"><Sparkles size={14} /></div><div className="chat-thinking"><i /><i /><i /></div></div>}
+        {thinking && <div className="chat-message assistant"><div className="chat-avatar"><BreadIcon size={16} /></div><div className="chat-thinking"><i /><i /><i /></div></div>}
         <div ref={endRef} />
       </div>
 

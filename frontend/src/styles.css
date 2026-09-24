@@ -21,7 +21,7 @@ button { cursor: pointer; }
 .app-shell { min-height: 100vh; background: #eceeea; }
 .topbar { height: 72px; display: grid; grid-template-columns: 320px 1fr auto; align-items: center; padding: 0 26px; background: rgba(255,255,255,.94); border-bottom: 1px solid #dfe3df; position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); }
 .brand { color: var(--ink); display: flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 700; letter-spacing: .04em; }
-.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px 10px 10px 3px; background: var(--green); color: white; font-family: 'Noto Serif SC', serif; box-shadow: 0 7px 18px rgba(23,107,91,.2); }
+.brand-mark { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #dfe3e0; border-radius: 10px 10px 10px 3px; background: white; color: #111; box-shadow: 0 6px 16px rgba(26,37,32,.1); }
 .brand > span:last-child { display: flex; flex-direction: column; line-height: 1.1; }
 .brand small { font-size: 8px; letter-spacing: .22em; color: #89918d; margin-top: 4px; }
 .document-title { justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
