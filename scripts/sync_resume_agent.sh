@@ -13,9 +13,11 @@ if ! git remote get-url "$WEBSITE_REMOTE" >/dev/null 2>&1; then
   git remote add "$WEBSITE_REMOTE" "git@github.com:mianbao-ai/website.git"
 fi
 
-git -C "$WEBSITE_REPO" fetch origin codex/resume-agent-core
-git -C "$WEBSITE_REPO" subtree split --prefix="$CORE_PREFIX" -b "$CORE_BRANCH" >/dev/null
-git -C "$WEBSITE_REPO" push origin "$CORE_BRANCH"
+git -C "$WEBSITE_REPO" fetch origin main
+git -C "$WEBSITE_REPO" fetch origin "$CORE_BRANCH"
+SPLIT_COMMIT="$(git -C "$WEBSITE_REPO" subtree split --prefix="$CORE_PREFIX" 2>/dev/null)"
+git -C "$WEBSITE_REPO" branch -f "$CORE_BRANCH" "$SPLIT_COMMIT"
+git -C "$WEBSITE_REPO" push --force-with-lease origin "$CORE_BRANCH"
 git fetch "$WEBSITE_REMOTE" "$CORE_BRANCH"
 git subtree pull --prefix="$TARGET_PREFIX" "$WEBSITE_REMOTE" "$CORE_BRANCH" --squash
 
