@@ -1,3 +1,4 @@
+from __future__ import annotations
 """PDF export for ResumeDocument, sharing the canonical Word layout."""
 from html import escape
 import base64

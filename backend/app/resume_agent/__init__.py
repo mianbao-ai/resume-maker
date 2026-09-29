@@ -1,0 +1,1 @@
+"""Local Resume Agent integration."""

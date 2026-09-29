@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Professional DOCX export for ResumeDocument."""
 from io import BytesIO
 from typing import Any, Dict, List, Optional

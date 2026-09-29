@@ -41,6 +41,20 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS resume_agent_sessions (
+                id TEXT PRIMARY KEY,
+                source_resume_id TEXT,
+                document TEXT NOT NULL,
+                goal TEXT,
+                version INTEGER NOT NULL,
+                messages TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
 
 
 def row_to_dict(row: sqlite3.Row) -> dict:

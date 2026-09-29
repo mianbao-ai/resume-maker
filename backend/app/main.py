@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database import connection, init_db, row_to_dict
 from .schemas import Resume, ResumeCreate, ResumeSummary, ResumeUpdate
+from .resume_agent.api import router as resume_agent_router
 
 
 @asynccontextmanager
@@ -26,6 +27,9 @@ app = FastAPI(
 origins = os.getenv(
     "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
 ).split(",")
+app.include_router(resume_agent_router)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[origin.strip() for origin in origins],
