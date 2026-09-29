@@ -4,21 +4,22 @@ import { createResume, updateResume } from './api'
 import BreadIcon from './components/BreadIcon'
 import ResumeChat from './components/ResumeChat'
 import ResumePreview from './components/ResumePreview'
+import { fromLegacyResume, idToTemplate, templateToId } from './document'
 import { sampleResume } from './sample'
-import type { ResumeData, Template } from './types'
+import type { ResumeDocument, Template } from './types'
 
 const STORAGE_KEY = 'resume-maker-draft-v1'
 const colors = ['#176B5B', '#214C75', '#714955', '#8A4B26', '#51468C', '#252525']
 
-function loadDraft(): ResumeData {
+function loadDraft(): ResumeDocument {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : sampleResume
+    return stored ? fromLegacyResume(JSON.parse(stored), sampleResume) : sampleResume
   } catch { return sampleResume }
 }
 
 export default function App() {
-  const [resume, setResume] = useState<ResumeData>(loadDraft)
+  const [resume, setResume] = useState<ResumeDocument>(loadDraft)
   const [savedId, setSavedId] = useState<string | null>(null)
   const [saveState, setSaveState] = useState<'local' | 'saving' | 'cloud' | 'error'>('local')
   const firstRender = useRef(true)
@@ -30,8 +31,7 @@ export default function App() {
   }, [resume])
 
   const completeness = useMemo(() => {
-    const p = resume.content.personal
-    const checks = [p.name, p.title, p.email, p.summary, resume.content.experiences.length, resume.content.education.length, resume.content.skills.length]
+    const checks = [resume.basics.name, resume.targetRole, resume.basics.email, resume.selfEvaluation, resume.experiences.length, resume.education.length, resume.skills.length]
     return Math.round((checks.filter(Boolean).length / checks.length) * 100)
   }, [resume])
 
@@ -69,7 +69,7 @@ export default function App() {
       </header>
 
       <main className="workspace">
-        <aside className="chat-column"><ResumeChat resume={resume} onChange={setResume} /></aside>
+        <aside className="chat-column"><ResumeChat document={resume} onChange={setResume} /></aside>
         <section className="preview-area">
           <div className="preview-toolbar">
             <div className="completion">
@@ -77,12 +77,12 @@ export default function App() {
               <div><strong>简历完成度</strong><small>{completeness === 100 ? '内容很完整，可以投递了' : '再补充一些内容会更出彩'}</small></div>
             </div>
             <div className="toolbar-groups">
-              <div className="tool-group"><LayoutTemplate size={15} /><span>版式</span>{(['classic', 'minimal'] as Template[]).map((t) => <button key={t} className={resume.template === t ? 'active' : ''} onClick={() => setResume({ ...resume, template: t })}>{t === 'classic' ? '专业' : '极简'}</button>)}</div>
-              <div className="tool-group colors"><Palette size={15} /><span>主题</span>{colors.map((color) => <button key={color} className={resume.accent_color === color ? 'active' : ''} style={{ background: color }} onClick={() => setResume({ ...resume, accent_color: color })} aria-label={`主题色 ${color}`} />)}</div>
+              <div className="tool-group"><LayoutTemplate size={15} /><span>版式</span>{(['classic', 'minimal'] as Template[]).map((t) => <button key={t} className={idToTemplate(resume.templateId) === t ? 'active' : ''} onClick={() => setResume({ ...resume, templateId: templateToId(t) })}>{t === 'classic' ? '专业' : '极简'}</button>)}</div>
+              <div className="tool-group colors"><Palette size={15} /><span>主题</span>{colors.map((color) => <button key={color} className={resume.formatting.accentColor === color ? 'active' : ''} style={{ background: color }} onClick={() => setResume({ ...resume, formatting: { ...resume.formatting, accentColor: color } })} aria-label={`主题色 ${color}`} />)}</div>
               <button className="reset-button" onClick={reset}><RotateCcw size={15} /> 重置</button>
             </div>
           </div>
-          <div className="paper-stage"><div className="paper-wrap"><ResumePreview resume={resume} onChange={setResume} /></div></div>
+          <div className="paper-stage"><div className="paper-wrap"><ResumePreview document={resume} onChange={setResume} /></div></div>
           <div className="privacy-note"><Sparkles size={14} /> 默认仅存储在你的浏览器中，你的数据由你掌控</div>
         </section>
       </main>

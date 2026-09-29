@@ -1,65 +1,70 @@
+export type TemplateId =
+  | 'ats-classic-v1'
+  | 'tech-elegant-v1'
+  | 'modern-sidebar-v1'
+  | 'campus-recruiting-v1'
+
 export type Template = 'classic' | 'minimal'
 export type SkillLevel = '了解' | '熟悉' | '熟练' | '精通'
 
-export interface PersonalInfo {
+export interface ResumeLink { id: string; label: string; url: string }
+
+export interface ResumeBasics {
   name: string
-  title: string
+  headline: string
+  gender?: string
   email: string
   phone: string
   location: string
-  website: string
-  summary: string
+  photo?: string
+  links: ResumeLink[]
+  extras: Array<{ id: string; label: string; value: string }>
 }
 
-export interface Experience {
+export interface ResumeExperience {
   id: string
   company: string
   role: string
-  start_date: string
-  end_date: string
-  current: boolean
-  description: string
+  startDate: string
+  endDate: string
+  bullets: string[]
 }
 
-export interface Project {
-  id: string
-  name: string
-  role: string
-  link: string
-  description: string
-}
+export interface ResumeProject { id: string; name: string; role: string; link?: string; bullets: string[] }
 
-export interface Education {
+export interface ResumeEducation {
   id: string
   school: string
   degree: string
-  start_date: string
-  end_date: string
+  startDate: string
+  endDate: string
+  highlights: string[]
 }
 
-export interface Skill {
-  id: string
-  name: string
-  level: SkillLevel
-}
+export interface ResumeSkillGroup { id: string; label: string; skills: string[] }
 
-export interface ResumeContent {
-  personal: PersonalInfo
-  experiences: Experience[]
-  projects: Project[]
-  education: Education[]
-  skills: Skill[]
-}
-
-export interface ResumeData {
+export interface ResumeDocument {
+  id?: string
   title: string
-  template: Template
-  accent_color: string
-  content: ResumeContent
+  targetRole: string
+  audience: 'hr' | 'graduate_examiner' | 'internship_recruiter' | 'general'
+  templateId: TemplateId
+  basics: ResumeBasics
+  education: ResumeEducation[]
+  experiences: ResumeExperience[]
+  projects: ResumeProject[]
+  research: Array<Record<string, unknown>>
+  awards: Array<Record<string, unknown>>
+  skills: ResumeSkillGroup[]
+  languages: Array<Record<string, unknown>>
+  selfEvaluation: string
+  sectionOrder: string[]
+  formatting: { accentColor: string; entries: Record<string, unknown>; inline: Record<string, unknown> }
 }
 
-export interface SavedResume extends ResumeData {
+export interface AgentMessage {
   id: string
-  created_at: string
-  updated_at: string
+  role: 'assistant' | 'user' | 'system'
+  content: string
+  createdAt?: string
 }
