@@ -82,24 +82,25 @@ MIT
 
 ## Resume Agent backend
 
-The open-source backend now includes the portable Resume Agent core under
-`backend/app/resume_agent/core`. The local integration stores Agent sessions in
-SQLite and exposes:
+The open-source backend now includes the full Resume Agent feature under
+`backend/app/resume_agent`, synced from the website subtree. Its API follows the
+same session, goal, patch, proposal, chat stream, and export protocol as the
+website Agent:
 
 - `POST /api/resume-agent/sessions`
 - `GET /api/resume-agent/sessions/{id}`
 - `PUT /api/resume-agent/sessions/{id}/goal`
 - `PATCH /api/resume-agent/sessions/{id}/document`
-- `GET /api/resume-agent/sessions/{id}/export/docx`
-- `GET /api/resume-agent/sessions/{id}/export/pdf`
+- `POST /api/resume-agent/sessions/{id}/chat/stream`
+- `POST /api/resume-agent/sessions/{id}/export/docx`
+- `POST /api/resume-agent/sessions/{id}/export/pdf`
 
-The experimental website keeps the host-specific orchestration, authentication,
-and database code. Its portable core is published as the `resume-agent-core`
-branch so future changes can be pulled here without copying files manually:
+The website publishes the complete feature as the `resume-maker` subtree branch.
+Future updates can be pulled here without copying files manually:
 
 ```bash
 WEBSITE_REPO=../website ./scripts/sync_resume_agent.sh
 ```
 
 The script refreshes the subtree source and runs `git subtree pull`; review and
-commit the resulting subtree update together with any open-source adapter changes.
+commit the resulting backend subtree update together with frontend changes.

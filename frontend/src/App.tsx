@@ -1,6 +1,6 @@
 import { Check, Cloud, Download, Github, LayoutTemplate, Loader2, Palette, RotateCcw, Sparkles } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createResume, updateResume } from './api'
+import { createAgentSession, exportAgent, updateAgentDocument, updateAgentGoal } from './api'
 import BreadIcon from './components/BreadIcon'
 import ResumeChat from './components/ResumeChat'
 import ResumePreview from './components/ResumePreview'
@@ -20,7 +20,8 @@ function loadDraft(): ResumeDocument {
 
 export default function App() {
   const [resume, setResume] = useState<ResumeDocument>(loadDraft)
-  const [savedId, setSavedId] = useState<string | null>(null)
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [documentVersion, setDocumentVersion] = useState(() => loadDraft().version || 1)
   const [saveState, setSaveState] = useState<'local' | 'saving' | 'cloud' | 'error'>('local')
   const firstRender = useRef(true)
 
@@ -35,18 +36,29 @@ export default function App() {
     return Math.round((checks.filter(Boolean).length / checks.length) * 100)
   }, [resume])
 
-  const saveToCloud = async () => {
+  const saveToCloud = async (): Promise<string | null> => {
     setSaveState('saving')
     try {
-      const saved = savedId ? await updateResume(savedId, resume) : await createResume(resume)
-      setSavedId(saved.id)
+      let activeSessionId = sessionId
+      let version = documentVersion
+      if (!activeSessionId) {
+        const created = await createAgentSession({ target_role: resume.targetRole })
+        activeSessionId = created.session_id
+        version = created.resume_document.version || 1
+        const goal = await updateAgentGoal(activeSessionId, { purpose: 'undecided', target_role: resume.targetRole })
+        version = goal.resume_document.version || version + 1
+        setSessionId(activeSessionId)
+      }
+      const saved = await updateAgentDocument(activeSessionId, version, resume)
+      setDocumentVersion(saved.resume_document.version || version + 1)
       setSaveState('cloud')
-    } catch { setSaveState('error') }
+      return activeSessionId
+    } catch { setSaveState('error'); return null }
   }
 
   const reset = () => {
     if (window.confirm('确定恢复示例内容吗？当前编辑将被覆盖。')) {
-      setResume(sampleResume); setSavedId(null)
+      setResume(sampleResume); setSessionId(null); setDocumentVersion(1)
     }
   }
 
@@ -64,12 +76,12 @@ export default function App() {
         <nav className="top-actions">
           <a className="ghost-button github" href="https://github.com/mianbao-ai/resume-maker" target="_blank" rel="noreferrer"><Github size={17} /> GitHub</a>
           <button className="ghost-button" onClick={saveToCloud}><Cloud size={17} /> 同步</button>
-          <button className="primary-button" onClick={() => window.print()}><Download size={17} /> 导出 PDF</button>
+          <button className="primary-button" onClick={async () => { try { const activeSessionId = sessionId || await saveToCloud(); if (activeSessionId) { const blob = await exportAgent(activeSessionId, 'pdf'); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = 'resume.pdf'; link.click(); URL.revokeObjectURL(url) } } catch { setSaveState('error') } }}><Download size={17} /> 导出 PDF</button>
         </nav>
       </header>
 
       <main className="workspace">
-        <aside className="chat-column"><ResumeChat document={resume} onChange={setResume} /></aside>
+        <aside className="chat-column"><ResumeChat document={resume} sessionId={sessionId} ensureSession={saveToCloud} /></aside>
         <section className="preview-area">
           <div className="preview-toolbar">
             <div className="completion">

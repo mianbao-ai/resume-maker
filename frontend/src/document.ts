@@ -44,18 +44,3 @@ export function fromLegacyResume(value: unknown, fallback: ResumeDocument): Resu
     skills: [{ id: 'skills-1', label: '技能', skills: (input.content.skills || []).map((item) => item.name || '').filter(Boolean) }],
   }
 }
-
-/** Temporary bridge until the backend stores ResumeDocument directly. */
-export function toLegacyResume(document: ResumeDocument) {
-  const website = document.basics.links.find((link) => link.url)?.url || ''
-  return {
-    title: document.title, template: idToTemplate(document.templateId), accent_color: document.formatting.accentColor,
-    content: {
-      personal: { name: document.basics.name, title: document.basics.headline || document.targetRole, email: document.basics.email, phone: document.basics.phone, location: document.basics.location, website, summary: document.selfEvaluation },
-      experiences: document.experiences.map((item) => ({ id: item.id, company: item.company, role: item.role, start_date: item.startDate, end_date: item.endDate === '至今' ? '' : item.endDate, current: item.endDate === '至今', description: item.bullets.join('\n') })),
-      projects: document.projects.map((item) => ({ id: item.id, name: item.name, role: item.role, link: item.link || '', description: item.bullets.join('\n') })),
-      education: document.education.map((item) => ({ id: item.id, school: item.school, degree: item.degree, start_date: item.startDate, end_date: item.endDate })),
-      skills: document.skills.flatMap((group) => group.skills.map((name, index) => ({ id: `${group.id}-${index}`, name, level: '熟练' }))),
-    },
-  }
-}

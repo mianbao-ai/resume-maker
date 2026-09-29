@@ -45,6 +45,7 @@ export interface ResumeSkillGroup { id: string; label: string; skills: string[] 
 
 export interface ResumeDocument {
   id?: string
+  version?: number
   title: string
   targetRole: string
   audience: 'hr' | 'graduate_examiner' | 'internship_recruiter' | 'general'
