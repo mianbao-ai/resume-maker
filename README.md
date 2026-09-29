@@ -19,10 +19,10 @@ A local-first, open-source resume builder with a decoupled frontend and backend.
 
 ```bash
 cd backend
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 ```
 
 API documentation is available at <http://localhost:8000/docs>.
@@ -44,7 +44,11 @@ Visit <http://localhost:5173>. The development server proxies `/api` requests to
 ```text
 .
 ├── backend/              # FastAPI API, SQLite data layer, and tests
-│   ├── app/
+│   ├── main.py           # backend entry point, matching website/server
+│   ├── features/
+│   ├── infrastructure/
+│   ├── models/
+│   └── utils/
 │   └── tests/
 └── frontend/             # React + Vite single-page application
     └── src/
@@ -66,7 +70,7 @@ Backend environment variables:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RESUME_DB_PATH` | `backend/data/resumes.db` | Path to the SQLite database file |
+| `SQL_DATABASE_URL` | `sqlite+aiosqlite:///./userauth.db` | SQLModel database URL |
 | `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated list of allowed frontend origins |
 
 ## Testing
@@ -83,7 +87,7 @@ MIT
 ## Resume Agent backend
 
 The open-source backend now includes the full Resume Agent feature under
-`backend/app/resume_agent`, synced from the website subtree. Its API follows the
+`backend/features/resume_agent`, synced from the website subtree. Its API follows the
 same session, goal, patch, proposal, chat stream, and export protocol as the
 website Agent:
 

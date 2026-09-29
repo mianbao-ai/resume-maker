@@ -7,7 +7,7 @@ WEBSITE_REPO="${WEBSITE_REPO:-../website}"
 WEBSITE_REMOTE="${WEBSITE_REMOTE:-website}"
 FEATURE_BRANCH="${FEATURE_BRANCH:-resume-maker}"
 FEATURE_PREFIX="server/features/resume_agent"
-TARGET_PREFIX="backend/app/resume_agent"
+TARGET_PREFIX="backend/features/resume_agent"
 
 if ! git remote get-url "$WEBSITE_REMOTE" >/dev/null 2>&1; then
   git remote add "$WEBSITE_REMOTE" "git@github.com:mianbao-ai/website.git"
